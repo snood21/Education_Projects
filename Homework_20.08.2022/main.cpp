@@ -25,9 +25,12 @@ using namespace std;
 #define CSI "\x1b["
 
 void menu();
-void main_menu(string menu_list[],int menu_items,int menu_index);
+void display_menu(string menu_list[],int menu_items,int menu_index);
+void navigating_by_menu(string menu_list[], int menu_items, int &menu_index, int key);
 int get_key();
 void array_arithmetic();
+void cyclic_shift();
+void shift_array(bool shift_to_right);
 
 int main()
 {
@@ -50,25 +53,33 @@ void menu()
     menu_list[4] = "Выход";
 
     int menu_index = 0;
-    main_menu(menu_list,menu_items,menu_index);
+    display_menu(menu_list,menu_items,menu_index);
     bool quit = false;
 
     while (!quit)
     {
         int key = get_key();
-        switch (key)
+
+        if (key == ENTER)
         {
-        case ENTER:
             switch (menu_index)
             {
-            case 0: array_arithmetic(); main_menu(menu_list,menu_items,menu_index); break;
-            /*case 1: triangle1(); main_menu(menu_list,menu_items,menu_index); break;
-            case 2: triangle2(); main_menu(menu_list,menu_items,menu_index); break;
-            case 3: triangle3(); main_menu(menu_list,menu_items,menu_index); break;*/
+            case 0: array_arithmetic(); display_menu(menu_list,menu_items,menu_index); break;
+            case 1: cyclic_shift(); display_menu(menu_list,menu_items,menu_index); break;
+            /*case 2: triangle2(); display_menu(menu_list,menu_items,menu_index); break;
+            case 3: triangle3(); display_menu(menu_list,menu_items,menu_index); break;*/
             case 4: quit = true; break;
             default: break;
             }
-            break;
+        }
+        else navigating_by_menu(menu_list, menu_items, menu_index, key);
+    }
+}
+
+void navigating_by_menu(string menu_list[], int menu_items, int &menu_index, int key)
+{
+    switch (key)
+        {
         case DOWN_ARROW:
             if (menu_index < menu_items-1)
             {
@@ -125,10 +136,9 @@ void menu()
             break;
         default: break;
         }
-    }
 }
 
-void main_menu(string menu_list[],int menu_items,int menu_index)
+void display_menu(string menu_list[], int menu_items, int menu_index)
 {
     cout << CSI << "1;1H";
     cout << CSI << "2J";
@@ -206,6 +216,84 @@ void array_arithmetic()
     cout << "Среднее арифметическое элементов массива: " << sum/array_size << endl;
     cout << "Максимальный элемент массива: " << max << endl;
     cout << "минимальный элемент массива: " << min << endl;   
+
+    cout << CSI << "42m";
+    cout << "Назад";
+    cout << CSI << "0m";
+    while (get_key() != ENTER);
+}
+
+void cyclic_shift()
+{
+    cout << CSI << "1;1H";
+    cout << CSI << "2J";
+
+    const int sub_menu_items = 3;
+    string sub_menu_list[sub_menu_items];
+    sub_menu_list[0] = "Циклически сдвинуть массив вправо";
+    sub_menu_list[1] = "Циклически сдвинуть массив влево";
+    sub_menu_list[2] = "Назад";
+
+    int sub_menu_index = 0;
+
+    display_menu(sub_menu_list, sub_menu_items, sub_menu_index);
+    bool back = false;
+
+    while (!back)
+    {
+        int key = get_key();
+
+        if (key == ENTER)
+        {
+            switch (sub_menu_index)
+            {
+            case 0: shift_array(true); display_menu(sub_menu_list, sub_menu_items, sub_menu_index); break;
+            case 1: shift_array(false); display_menu(sub_menu_list, sub_menu_items, sub_menu_index); break;
+            case 2: back = true; break;
+            default: break;
+            }
+        }
+        else navigating_by_menu(sub_menu_list, sub_menu_items, sub_menu_index, key);
+    }
+}
+
+void shift_array(bool shift_to_right)
+{
+    cout << CSI << "1;1H";
+    cout << CSI << "2J";
+
+    const int array_size = 10;
+    int current_array[array_size] = {1,2,3,4,5,6,7,8,9,10};
+    int shift_array[array_size];
+    int shift_value;
+
+    cout << "Введите значение сдвига: ";
+    cin >> shift_value;
+    cin.ignore(INT32_MAX,'\n');
+
+    for (int i = 0; i < array_size; i++)
+    {
+        int shift_index = (shift_to_right ? (i+shift_value) : (i + array_size - shift_value))%array_size;
+        shift_array[shift_index] = current_array[i];
+    }
+
+    cout << "Начальный массив: ";
+    
+    for (int i = 0; i < array_size; i++)
+    {
+        cout << current_array[i] << " ";
+    }
+    
+    cout << endl;
+
+    cout << "Массив после сдвига: ";
+    
+    for (int i = 0; i < array_size; i++)
+    {
+        cout << shift_array[i] << " ";
+    }
+    
+    cout << endl;
 
     cout << CSI << "42m";
     cout << "Назад";
