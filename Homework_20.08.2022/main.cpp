@@ -31,6 +31,9 @@ int get_key();
 void array_arithmetic();
 void cyclic_shift();
 void shift_array(bool shift_to_right);
+int reduced_shift_value(int shift_value, int array_size);
+void decimal_to_binary();
+void decimal_to_hexadecimal();
 
 int main()
 {
@@ -66,8 +69,8 @@ void menu()
             {
             case 0: array_arithmetic(); display_menu(menu_list,menu_items,menu_index); break;
             case 1: cyclic_shift(); display_menu(menu_list,menu_items,menu_index); break;
-            /*case 2: triangle2(); display_menu(menu_list,menu_items,menu_index); break;
-            case 3: triangle3(); display_menu(menu_list,menu_items,menu_index); break;*/
+            case 2: decimal_to_binary(); display_menu(menu_list,menu_items,menu_index); break;
+            case 3: decimal_to_hexadecimal(); display_menu(menu_list,menu_items,menu_index); break;
             case 4: quit = true; break;
             default: break;
             }
@@ -181,13 +184,14 @@ void array_arithmetic()
     cout << CSI << "2J";
 
     const int array_size = 5;
-    double array[array_size] = {3,5,8,13,21};
-    /*cout "Введите массив из пяти элементов:";
+    double array[array_size] = {};
+    cout << "Введите массив из пяти элементов: ";
 
     for (int i = 0; i < array_size; i++)
     {
         cin >> array[i];
-    }*/
+    }
+    cin.ignore(INT32_MAX,'\n');
     
     cout << "Введенный массив: " << array[0] << " ";
 
@@ -271,6 +275,8 @@ void shift_array(bool shift_to_right)
     cin >> shift_value;
     cin.ignore(INT32_MAX,'\n');
 
+    shift_value = reduced_shift_value(shift_value, array_size);
+
     for (int i = 0; i < array_size; i++)
     {
         int shift_index = (shift_to_right ? (i+shift_value) : (i + array_size - shift_value))%array_size;
@@ -291,6 +297,105 @@ void shift_array(bool shift_to_right)
     for (int i = 0; i < array_size; i++)
     {
         cout << shift_array[i] << " ";
+    }
+    
+    cout << endl;
+
+    cout << CSI << "42m";
+    cout << "Назад";
+    cout << CSI << "0m";
+    while (get_key() != ENTER);
+}
+
+int reduced_shift_value(int shift_value, int array_size)
+{
+    if (shift_value/array_size==0) return shift_value;
+    else return reduced_shift_value(shift_value%array_size, array_size);
+}
+
+void decimal_to_binary()
+{
+    cout << CSI << "1;1H";
+    cout << CSI << "2J";
+
+    unsigned short decimal;
+    cout << "Введите целое неотрицательное десятичное число: ";
+    cin >> decimal;
+    cin.ignore(INT32_MAX,'\n');
+
+    const unsigned short array_size = 16;
+    unsigned short binary_array[array_size] = {};
+
+    for (unsigned short i = 0; i < array_size; i++)
+    {
+        binary_array[i] = decimal % 2;
+        if (decimal/2==0) break;
+        else decimal /= 2;       
+    }
+
+    cout << "Двоичное представление введенного числа: ";
+    
+    for (short i = array_size-1; i >= 0; i--)
+    {
+        cout << binary_array[i];
+        if (i == 8) cout << " ";
+    }
+    
+    cout << endl;
+
+    cout << CSI << "42m";
+    cout << "Назад";
+    cout << CSI << "0m";
+    while (get_key() != ENTER);
+}
+
+void decimal_to_hexadecimal()
+{
+    cout << CSI << "1;1H";
+    cout << CSI << "2J";
+
+    unsigned long decimal;
+    cout << "Введите целое неотрицательное десятичное число: ";
+    cin >> decimal;
+    cin.ignore(INT32_MAX,'\n');
+
+    const unsigned short array_size = 8;
+    char hexadecimal_array[array_size] = {};
+
+    for (unsigned short i = 0; i < array_size; i++)
+    {
+        int hexadecimal_digit = decimal % 16;
+        char hexadecimal_digit_representation;
+        switch (hexadecimal_digit)
+        {
+        case 0: hexadecimal_digit_representation = '0'; break;
+        case 1: hexadecimal_digit_representation = '1'; break;
+        case 2: hexadecimal_digit_representation = '2'; break;
+        case 3: hexadecimal_digit_representation = '3'; break;
+        case 4: hexadecimal_digit_representation = '4'; break;
+        case 5: hexadecimal_digit_representation = '5'; break;
+        case 6: hexadecimal_digit_representation = '6'; break;
+        case 7: hexadecimal_digit_representation = '7'; break;
+        case 8: hexadecimal_digit_representation = '8'; break;
+        case 9: hexadecimal_digit_representation = '9'; break;
+        case 10: hexadecimal_digit_representation = 'A'; break;
+        case 11: hexadecimal_digit_representation = 'B'; break;
+        case 12: hexadecimal_digit_representation = 'C'; break;
+        case 13: hexadecimal_digit_representation = 'D'; break;
+        case 14: hexadecimal_digit_representation = 'E'; break;
+        case 15: hexadecimal_digit_representation = 'F'; break;
+        default: break;
+        }
+        hexadecimal_array[i] = hexadecimal_digit_representation;
+        if (decimal/16==0) break;
+        else decimal /= 16;
+    }
+
+    cout << "Шестнадцатеричное представление введенного числа: ";
+    
+    for (short i = array_size-1; i >= 0; i--)
+    {
+        cout << hexadecimal_array[i];
     }
     
     cout << endl;
