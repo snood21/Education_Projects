@@ -25,23 +25,24 @@ using namespace std;
 #define CSI "\x1b["
 
 void menu();
-void DisplayMenu(string MenuList[],int MenuItems,int MenuIndex);
-void NavigatingByMenu(string MenuList[], int MenuItems, int &MenuIndex, int key);
+void DisplayMenu(string MenuList[], const int MenuItems, int MenuIndex);
+void NavigatingByMenu(string MenuList[], const int MenuItems, int &MenuIndex, int key);
+void PrintString(string Text, int &ActiveString);
 int GetKey();
-bool ArrayIsFilled(bool ArrayFilled, int ActiveString);
-void FillRand(int Array[], int ArraySize, bool &ArrayFilled);
-void Print(int Array[], int ArraySize, int &ActiveString);
-void ReversePrint(int Array[], int ArraySize, int &ActiveString);
-void ReversePrint(int Array[], int ArraySize, int &ActiveString);
-void Sum(int Array[], int ArraySize, int &ActiveString);
-void Avg(int Array[], int ArraySize, int &ActiveString);
-void minValueIn(int Array[], int ArraySize, int &ActiveString);
-void maxValueIn(int Array[], int ArraySize, int &ActiveString);
-void shiftLeft(int Array[], int ArraySize, int &ActiveString);
-void shiftRight(int Array[], int ArraySize, int &ActiveString);
-int ReducedShiftValue(int ShiftValue, int ArraySize);
-void UniqueRand(int Array[], int ArraySize, bool &ArrayFilled);
+bool ArrayIsFilled(const bool ArrayFilled, int &ActiveString);
+void FillRand(int Array[], const int ArraySize, bool &ArrayFilled, int &ActiveString, int MinRand = 0, int MaxRand = 100);
+void Print(int Array[], const int ArraySize, int &ActiveString);
+void ReversePrint(int Array[], const int ArraySize, int &ActiveString);
+int Sum(int Array[], const int ArraySize);
+double Avg(int Array[], const int ArraySize);
+int minValueIn(int Array[], const int ArraySize);
+int maxValueIn(int Array[], const int ArraySize);
+void shiftLeft(int Array[], const int ArraySize, int ShiftValue, int &ActiveString);
+void shiftRight(int Array[], const int ArraySize, int ShiftValue, int &ActiveString);
+void UniqueRand(int Array[], int const ArraySize, bool &ArrayFilled, int &ActiveString);
 bool ValueInArray (int Array[], int ArrayValue, int ArrayIndex);
+void Sort(int Array[], const int ArraySize, const bool SortByAscending, int &ActiveString);
+void Search(int Array[], const int ArraySize, int &ActiveString);
 
 int main()
 {
@@ -63,7 +64,7 @@ void menu()
     cout << CSI << "?25l";
     cout << CSI << "?12l";
 
-    const int MenuItems = 11;
+    const int MenuItems = 15;
     string MenuList[MenuItems];
     MenuList[0] = "Заполнить массив случайными числами";
     MenuList[1] = "Вывести массив на экран";
@@ -75,9 +76,13 @@ void menu()
     MenuList[7] = "Сдвинуть массив на заданное число элементов влево";
     MenuList[8] = "Сдвинуть массив на заданное число элементов вправо";
     MenuList[9] = "Заполнить массив уникальными случайными числами";
-    MenuList[10] = "Выход";
+    MenuList[10] = "Отсортировать массив по возрастанию";
+    MenuList[11] = "Отсортировать массив по убыванию";
+    MenuList[12] = "Заполнить массив случайными числами с обязательными дублями";
+    MenuList[13] = "Найти дублирующиеся элементы массива";
+    MenuList[14] = "Выход";
 
-    int ActiveString = MenuItems+1;
+    int ActiveString = MenuItems+2;
 
     int MenuIndex = 0;
     DisplayMenu(MenuList,MenuItems,MenuIndex);
@@ -91,17 +96,71 @@ void menu()
         {
             switch (MenuIndex)
             {
-            case 0: FillRand(Array,ArraySize,ArrayFilled); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 0: FillRand(Array,ArraySize,ArrayFilled,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
             case 1: if (ArrayIsFilled(ArrayFilled,ActiveString)) Print(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
             case 2: if (ArrayIsFilled(ArrayFilled,ActiveString)) ReversePrint(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 3: if (ArrayIsFilled(ArrayFilled,ActiveString)) Sum(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 4: if (ArrayIsFilled(ArrayFilled,ActiveString)) Avg(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 5: if (ArrayIsFilled(ArrayFilled,ActiveString)) minValueIn(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 6: if (ArrayIsFilled(ArrayFilled,ActiveString)) maxValueIn(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 7: if (ArrayIsFilled(ArrayFilled,ActiveString)) shiftLeft(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 8: if (ArrayIsFilled(ArrayFilled,ActiveString)) shiftRight(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 9: UniqueRand(Array,ArraySize,ArrayFilled); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
-            case 10: quit = true; delete [] Array; break;
+            case 3: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Сумма элементов массива: ", ActiveString);
+                        cout << Sum(Array,ArraySize) << endl;
+                        ActiveString++;
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 4: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Среднее арифметическое элементов массива: ", ActiveString);
+                        cout << Avg(Array,ArraySize) << endl;
+                        ActiveString++;
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 5: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Минимальное значение в массиве: ", ActiveString);
+                        cout << minValueIn(Array,ArraySize) << endl;
+                        ActiveString++;
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 6: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Максимальное значение в массиве: ", ActiveString);
+                        cout << maxValueIn(Array,ArraySize) << endl;
+                        ActiveString++;
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 7: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Введите значение сдвига: ", ActiveString);
+                        int ShiftValue;
+                        cin >> ShiftValue;
+                        cin.ignore(INT32_MAX,'\n');
+                        ActiveString++;
+                        ShiftValue %= ArraySize;
+                        shiftLeft(Array,ArraySize,ShiftValue,ActiveString);
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 8: if (ArrayIsFilled(ArrayFilled,ActiveString))
+                    {
+                        PrintString("Введите значение сдвига: ", ActiveString);
+                        int ShiftValue;
+                        cin >> ShiftValue;
+                        cin.ignore(INT32_MAX,'\n');
+                        ActiveString++;
+                        ShiftValue %= ArraySize;
+                        shiftRight(Array,ArraySize,ShiftValue,ActiveString);
+                        NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
+                    }
+                    break;
+            case 9: UniqueRand(Array,ArraySize,ArrayFilled,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 10: if (ArrayIsFilled(ArrayFilled,ActiveString)) Sort(Array,ArraySize,true,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 11: if (ArrayIsFilled(ArrayFilled,ActiveString)) Sort(Array,ArraySize,false,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 12: FillRand(Array,ArraySize,ArrayFilled,ActiveString,0,ArraySize-1); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 13: if (ArrayIsFilled(ArrayFilled,ActiveString)) Search(Array,ArraySize,ActiveString); NavigatingByMenu(MenuList, MenuItems, MenuIndex, key); break;
+            case 14: quit = true; delete [] Array; break;
             default: break;
             }
         }
@@ -109,7 +168,7 @@ void menu()
     }
 }
 
-void NavigatingByMenu(string MenuList[], int MenuItems, int &MenuIndex, int key)
+void NavigatingByMenu(string MenuList[], const int MenuItems, int &MenuIndex, int key)
 {
     cout << CSI << MenuIndex+1 << ";1H";
     switch (key)
@@ -172,7 +231,7 @@ void NavigatingByMenu(string MenuList[], int MenuItems, int &MenuIndex, int key)
         }
 }
 
-void DisplayMenu(string MenuList[], int MenuItems, int MenuIndex)
+void DisplayMenu(string MenuList[], const int MenuItems, int MenuIndex)
 {
     cout << CSI << "1;1H";
     cout << CSI << "2J";
@@ -192,6 +251,13 @@ void DisplayMenu(string MenuList[], int MenuItems, int MenuIndex)
     cout << CSI << MenuIndex+1 << ";1H";
 }
 
+void PrintString(string Text, int &ActiveString)
+{
+    cout << CSI << ActiveString << ";1H";
+    cout << CSI << "2K";
+    cout << Text;
+}
+
 int GetKey()
 {
     #ifdef linux
@@ -209,32 +275,29 @@ int GetKey()
     #endif
 }
 
-bool ArrayIsFilled(bool ArrayFilled, int ActiveString)
+bool ArrayIsFilled(const bool ArrayFilled, int &ActiveString)
 {
     if (ArrayFilled) return true;
     else
     {
-        cout << CSI << ActiveString << ";1H";
-        cout << CSI << "2K";
-        cout << "Массив не заполнен! Сначала выполните процедуру его заполнения!";
+        PrintString("Массив не заполнен! Сначала выполните процедуру его заполнения!", ActiveString);
         return false;
     }
 }
 
-void FillRand(int Array[], int ArraySize, bool &ArrayFilled)
+void FillRand(int Array[], const int ArraySize, bool &ArrayFilled, int &ActiveString, int MinRand, int MaxRand)
 {
     for (int i = 0; i < ArraySize; i++)
     {
-        Array[i] = random()%100;
+        Array[i] = random()%(MaxRand-MinRand)+MinRand;
     }
     ArrayFilled = true;
+    PrintString("Выполнено!", ActiveString);
 }
 
-void Print(int Array[], int ArraySize, int &ActiveString)
+void Print(int Array[], const int ArraySize, int &ActiveString)
 {
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Текущий массив:";
+    PrintString("Текущий массив:", ActiveString);
     for (int i = 0; i < ArraySize; i++)
     {
         cout << " " << Array[i];
@@ -243,11 +306,9 @@ void Print(int Array[], int ArraySize, int &ActiveString)
     ActiveString++;
 }
 
-void ReversePrint(int Array[], int ArraySize, int &ActiveString)
+void ReversePrint(int Array[], const int ArraySize, int &ActiveString)
 {
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Текущий массив в обратном порядке:";
+    PrintString("Текущий массив в обратном порядке:", ActiveString);
     for (int i = ArraySize-1; i >= 0; i--)
     {
         cout << " " << Array[i];
@@ -256,7 +317,7 @@ void ReversePrint(int Array[], int ArraySize, int &ActiveString)
     ActiveString++;
 }
 
-void Sum(int Array[], int ArraySize, int &ActiveString)
+int Sum(int Array[], const int ArraySize)
 {
     int ArraySum = Array[0];
     
@@ -264,27 +325,17 @@ void Sum(int Array[], int ArraySize, int &ActiveString)
     {
         ArraySum += Array[i];
     }
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Сумма элементов массива: " << ArraySum << endl;
-    ActiveString++;
+    return ArraySum;
 }
 
-void Avg(int Array[], int ArraySize, int &ActiveString)
+double Avg(int Array[], const int ArraySize)
 {
-    int ArraySum = Array[0];
+    int ArraySum = Sum(Array, ArraySize);
         
-    for (int i = 1; i < ArraySize; i++)
-    {
-        ArraySum += Array[i];
-    }
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Среднее арифметическое элементов массива: " << (double) ArraySum/ArraySize << endl;
-    ActiveString++;
+    return (double) ArraySum/ArraySize;
 }
 
-void minValueIn(int Array[], int ArraySize, int &ActiveString)
+int minValueIn(int Array[], const int ArraySize)
 {
     int MinValue = Array[0];
         
@@ -292,13 +343,10 @@ void minValueIn(int Array[], int ArraySize, int &ActiveString)
     {
         if (Array[i] < MinValue) MinValue = Array[i];
     }
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Минимальное значение в массиве: " << MinValue << endl;
-    ActiveString++;
+    return MinValue;
 }
 
-void maxValueIn(int Array[], int ArraySize, int &ActiveString)
+int maxValueIn(int Array[], const int ArraySize)
 {
     int MaxValue = Array[0];
         
@@ -306,61 +354,29 @@ void maxValueIn(int Array[], int ArraySize, int &ActiveString)
     {
         if (Array[i] > MaxValue) MaxValue = Array[i];
     }
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << "Максимальное значение в массиве: " << MaxValue << endl;
-    ActiveString++;
+    return MaxValue;
 }
 
-void shiftLeft(int Array[], int ArraySize, int &ActiveString)
+void shiftLeft(int Array[], const int ArraySize, int ShiftValue, int &ActiveString)
 {
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    int ShiftValue;
-    cout << "Введите значение сдвига: ";
-    cin >> ShiftValue;
-    cin.ignore(INT32_MAX,'\n');
-    ActiveString++;
-    ShiftValue = ReducedShiftValue(ShiftValue, ArraySize);
-    
-    cout << "Массив, сдвинутый на " << ShiftValue << " влево :";
-    for (int i = ArraySize - ShiftValue; i < 2 * ArraySize - ShiftValue; i++)
+    for (int i = 0; i < ShiftValue; i++)
     {
-        int ShiftIndex = i%ArraySize;
-        cout << " " << Array[ShiftIndex];
+        int CurrentValue = Array[0];
+        for (int j = 0; j < ArraySize; j++)
+        {
+            Array[j] = Array[j+1];
+        }
+        Array[ArraySize-1] = CurrentValue;
     }
-    cout << endl;
-    ActiveString++;
+    PrintString("Выполнено!", ActiveString);
 }
 
-void shiftRight(int Array[], int ArraySize, int &ActiveString)
+void shiftRight(int Array[], const int ArraySize, int ShiftValue, int &ActiveString)
 {
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    int ShiftValue;
-    cout << "Введите значение сдвига: ";
-    cin >> ShiftValue;
-    cin.ignore(INT32_MAX,'\n');
-    ActiveString++;
-    ShiftValue = ReducedShiftValue(ShiftValue, ArraySize);
-    
-    cout << "Массив, сдвинутый на " << ShiftValue << " вправо :";
-    for (int i = ShiftValue; i < ArraySize+ShiftValue; i++)
-    {
-        int ShiftIndex = i%ArraySize;
-        cout << " " << Array[ShiftIndex];
-    }
-    cout << endl;
-    ActiveString++;
+    shiftLeft(Array, ArraySize, ArraySize-ShiftValue, ActiveString);
 }
 
-int ReducedShiftValue(int ShiftValue, int ArraySize)
-{
-    if (ShiftValue/ArraySize==0) return ShiftValue;
-    else return ReducedShiftValue(ShiftValue%ArraySize, ArraySize);
-}
-
-void UniqueRand(int Array[], int ArraySize, bool &ArrayFilled)
+void UniqueRand(int Array[], const int ArraySize, bool &ArrayFilled, int &ActiveString)
 {
     for (int i = 0; i < ArraySize; i++)
     {
@@ -373,6 +389,7 @@ void UniqueRand(int Array[], int ArraySize, bool &ArrayFilled)
         Array[i] = ArrayValue;
     }
     ArrayFilled = true;
+    PrintString("Выполнено!", ActiveString);
 }
 
 bool ValueInArray (int Array[], int ArrayValue, int ArrayIndex)
@@ -380,7 +397,60 @@ bool ValueInArray (int Array[], int ArrayValue, int ArrayIndex)
     bool ValueInArray = false;
     for (int i = 0; i < ArrayIndex; i++)
     {
-        if (Array[i] == ArrayValue) ValueInArray = true; break;
+        if (Array[i] == ArrayValue)
+        {
+            ValueInArray = true;
+            break;
+        }
     }
     return ValueInArray;
+}
+
+void Sort(int Array[], const int ArraySize, const bool SortByAscending, int &ActiveString)
+{
+    for (int i = 0; i < ArraySize; i++)
+    {
+        for (int j = i+1; j < ArraySize; j++)
+        {
+            bool NeedChange;
+            if (SortByAscending) NeedChange = (Array[j] < Array[i]);
+            else NeedChange = (Array[j] > Array[i]);   
+
+            if (NeedChange)
+            {
+                int CurrentValue = Array[i];
+                Array[i] = Array[j];
+                Array[j] = CurrentValue;
+            }
+        }
+    }
+    PrintString("Выполнено!", ActiveString);
+}
+
+void Search(int Array[], const int ArraySize, int &ActiveString)
+{
+    PrintString("Дубли в массиве: ", ActiveString);
+    int ArrayOfDoubles[ArraySize];
+    int TotalDoubles = 0;
+    for (int i = 0; i < ArraySize; i++)
+    {
+        int CountOfDouble = 1;
+        for (int j = i+1; j < ArraySize; j++)
+        {
+            if ((Array[i] == Array[j])&&!(Array[j]==ArrayOfDoubles[j]))
+            {
+                CountOfDouble++;
+                ArrayOfDoubles[j] = Array[j];
+            }
+        }
+        if (CountOfDouble > 1)
+        {
+            TotalDoubles += CountOfDouble;
+            cout << Array[i] << " - " << CountOfDouble << " раз(а)\t";
+        }
+    }
+    if (TotalDoubles==0) cout << "отсутствуют";
+    
+    cout << endl;
+    ActiveString++;
 }
