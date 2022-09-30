@@ -217,18 +217,22 @@ void ArrayTypeSelectionMenu()
             case Char:
                 if (TwoDimensional) menu((char)SelectionMenuIndex, ArrayColumns, ArrayStrings);
                 else menu((char)SelectionMenuIndex, ArrayColumns);
+                DisplayMenu(SelectionMenuList, SelectionMenuItems, SelectionMenuIndex);
                 break;
             case Int:
                 if (TwoDimensional) menu(SelectionMenuIndex, ArrayColumns, ArrayStrings);
                 else menu(SelectionMenuIndex, ArrayColumns);
+                DisplayMenu(SelectionMenuList, SelectionMenuItems, SelectionMenuIndex);
                 break;
             case Float:
                 if (TwoDimensional) menu((float)SelectionMenuIndex, ArrayColumns, ArrayStrings);
                 else menu((float)SelectionMenuIndex, ArrayColumns);
+                DisplayMenu(SelectionMenuList, SelectionMenuItems, SelectionMenuIndex);
                 break;
             case Double:
                 if (TwoDimensional) menu((double)SelectionMenuIndex, ArrayColumns, ArrayStrings);
                 else menu((double)SelectionMenuIndex, ArrayColumns);
+                DisplayMenu(SelectionMenuList, SelectionMenuItems, SelectionMenuIndex);
                 break;
             case 4: quit = true; break;
             default: break;
