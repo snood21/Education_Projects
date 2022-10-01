@@ -1,44 +1,16 @@
-#include <iostream>
-#include <string>
-#include <iomanip>
-
-#ifdef linux
-#include <termios.h>
-#include <unistd.h>
-#define ENTER 10
-#define UP_ARROW 65
-#define DOWN_ARROW 66
-#define HOME 72
-#define END 70
-#else
-#include <conio.h>
-#define ENTER 13
-#define UP_ARROW 72
-#define DOWN_ARROW 80
-#define HOME 71
-#define END 79
-#endif
-
-
-using namespace std;
-
-#define ESC "\x1b"
-#define CSI "\x1b["
+#include "stdafx.h"
+#include "constants.h"
+#include "Service.h"
+#include "FillRand.h"
+#include "WorkingWithMenu.h"
 
 enum ArrayTypes { Char = 0, Int, Float, Double };
 
 void ArrayTypeSelectionMenu();
-void DisplayMenu(string MenuList[], const int MenuItems, int MenuIndex);
-void NavigatingByMenu(string MenuList[], const int MenuItems, int& MenuIndex, int key);
-void PrintString(string Text, int& ActiveString);
-int GetKey();
-bool ArrayIsFilled(const bool ArrayFilled, int& ActiveString);
 
 //Char
 void menu(char ArrayType, const int ArraySize);
 void menu(char ArrayType, const int ArrayColumns, const int ArrayStrings);
-void FillRand(char Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
-void FillRand(char**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
 void Print(char Array[], const int ArraySize, int& ActiveString);
 void Print(char** Array, const int ArrayColumns, const int ArrayStrings, int& ActiveString);
 void ReversePrint(char Array[], const int ArraySize, int& ActiveString);
@@ -67,8 +39,6 @@ void Search(char**& Array, const int ArrayColumns, const int ArrayStrings, int& 
 //Int
 void menu(int ArrayType, const int ArraySize);
 void menu(int ArrayType, const int ArrayColumns, const int ArrayStrings);
-void FillRand(int Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
-void FillRand(int**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
 void Print(int Array[], const int ArraySize, int& ActiveString);
 void Print(int** Array, const int ArrayColumns, const int ArrayStrings, int& ActiveString);
 void ReversePrint(int Array[], const int ArraySize, int& ActiveString);
@@ -97,8 +67,6 @@ void Search(int**& Array, const int ArrayColumns, const int ArrayStrings, int& A
 //Float
 void menu(float ArrayType, const int ArraySize);
 void menu(float ArrayType, const int ArrayColumns, const int ArrayStrings);
-void FillRand(float Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
-void FillRand(float**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
 void Print(float Array[], const int ArraySize, int& ActiveString);
 void Print(float** Array, const int ArrayColumns, const int ArrayStrings, int& ActiveString);
 void ReversePrint(float Array[], const int ArraySize, int& ActiveString);
@@ -127,8 +95,6 @@ void Search(float**& Array, const int ArrayColumns, const int ArrayStrings, int&
 //Double
 void menu(double ArrayType, const int ArraySize);
 void menu(double ArrayType, const int ArrayColumns, const int ArrayStrings);
-void FillRand(double Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
-void FillRand(double**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand = 0, int MaxRand = 255);
 void Print(double Array[], const int ArraySize, int& ActiveString);
 void Print(double** Array, const int ArrayColumns, const int ArrayStrings, int& ActiveString);
 void ReversePrint(double Array[], const int ArraySize, int& ActiveString);
@@ -241,123 +207,6 @@ void ArrayTypeSelectionMenu()
         else NavigatingByMenu(SelectionMenuList, SelectionMenuItems, SelectionMenuIndex, key);
     }
 
-}
-
-void NavigatingByMenu(string MenuList[], const int MenuItems, int& MenuIndex, int key)
-{
-    cout << CSI << MenuIndex + 1 << ";1H";
-    switch (key)
-    {
-    case DOWN_ARROW:
-        if (MenuIndex < MenuItems - 1)
-        {
-            cout << CSI << "1G";
-            cout << CSI << "2K";
-            cout << CSI << "0m";
-            cout << MenuList[MenuIndex];
-            MenuIndex++;
-            cout << CSI << "1E";
-            cout << CSI << "2K";
-            cout << CSI << "42m";
-            cout << MenuList[MenuIndex];
-            cout << CSI << "0m";
-            break;
-        }
-    case UP_ARROW:
-        if (MenuIndex > 0)
-        {
-            cout << CSI << "1G";
-            cout << CSI << "2K";
-            cout << CSI << "0m";
-            cout << MenuList[MenuIndex];
-            MenuIndex--;
-            cout << CSI << "1F";
-            cout << CSI << "2K";
-            cout << CSI << "42m";
-            cout << MenuList[MenuIndex];
-            cout << CSI << "0m";
-            break;
-        }
-    case HOME:
-        cout << CSI << "1G";
-        cout << CSI << "2K";
-        cout << CSI << "0m";
-        cout << MenuList[MenuIndex];
-        MenuIndex = 0;
-        cout << CSI << "1;1H";
-        cout << CSI << "2K";
-        cout << CSI << "42m";
-        cout << MenuList[MenuIndex];
-        cout << CSI << "0m";
-        break;
-    case END:
-        cout << CSI << "1G";
-        cout << CSI << "2K";
-        cout << CSI << "0m";
-        cout << MenuList[MenuIndex];
-        MenuIndex = MenuItems - 1;
-        cout << CSI << MenuItems << ";1H";
-        cout << CSI << "2K";
-        cout << CSI << "42m";
-        cout << MenuList[MenuIndex];
-        cout << CSI << "0m";
-        break;
-    default: break;
-    }
-}
-
-void DisplayMenu(string MenuList[], const int MenuItems, int MenuIndex)
-{
-    cout << CSI << "1;1H";
-    cout << CSI << "2J";
-    for (int i = 0; i < MenuItems; i++)
-    {
-        if (i == MenuIndex)
-        {
-            cout << CSI << "42m";
-            cout << MenuList[i] << endl;
-            cout << CSI << "0m";
-        }
-        else
-        {
-            cout << MenuList[i] << endl;
-        }
-    }
-    cout << CSI << MenuIndex + 1 << ";1H";
-}
-
-void PrintString(string Text, int& ActiveString)
-{
-    cout << CSI << ActiveString << ";1H";
-    cout << CSI << "2K";
-    cout << Text;
-}
-
-int GetKey()
-{
-#ifdef linux
-    struct termios oldt, newt;
-    int ch;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return ch;
-#else
-    return _getch();
-#endif
-}
-
-bool ArrayIsFilled(const bool ArrayFilled, int& ActiveString)
-{
-    if (ArrayFilled) return true;
-    else
-    {
-        PrintString("Массив не заполнен! Сначала выполните процедуру его заполнения!", ActiveString);
-        return false;
-    }
 }
 
 //Char
@@ -660,33 +509,6 @@ void menu(char ArrayType, const int ArrayColumns, const int ArrayStrings)
         }
         else NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
     }
-}
-
-void FillRand(char Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArraySize; i++)
-    {
-        int IntValue = rand() % (MaxRand - MinRand) + MinRand;
-        char ArrayValue = IntValue;
-        Array[i] = ArrayValue;
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
-}
-
-void FillRand(char**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArrayStrings; i++)
-    {
-        for (int j = 0; j < ArrayColumns; j++)
-        {
-            int IntValue = rand() % (MaxRand - MinRand) + MinRand;
-            char ArrayValue = IntValue;
-            Array[i][j] = ArrayValue;
-        }
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
 }
 
 void Print(char Array[], const int ArraySize, int& ActiveString)
@@ -1368,29 +1190,6 @@ void menu(int ArrayType, const int ArrayColumns, const int ArrayStrings)
     }
 }
 
-void FillRand(int Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArraySize; i++)
-    {
-        Array[i] = rand() % (MaxRand - MinRand) + MinRand;
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
-}
-
-void FillRand(int**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArrayStrings; i++)
-    {
-        for (int j = 0; j < ArrayColumns; j++)
-        {
-            Array[i][j] = rand() % (MaxRand - MinRand) + MinRand;
-        }
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
-}
-
 void Print(int Array[], const int ArraySize, int& ActiveString)
 {
     PrintString("Текущий массив:", ActiveString);
@@ -1695,8 +1494,8 @@ void Sort(int**& Array, const int ArrayColumns, const int ArrayStrings, const bo
 void Search(int Array[], const int ArraySize, int& ActiveString)
 {
     PrintString("Дубли в массиве: ", ActiveString);
-    //int ArrayOfDoubles[ArraySize];
-    int* ArrayOfDoubles = new int[ArraySize];
+    int ArrayOfDoubles[ArraySize];
+    //int* ArrayOfDoubles = new int[ArraySize];
     int TotalDoubles = 0;
     for (int i = 0; i < ArraySize; i++)
     {
@@ -1716,7 +1515,7 @@ void Search(int Array[], const int ArraySize, int& ActiveString)
         }
     }
     if (TotalDoubles == 0) cout << "отсутствуют";
-    delete[] ArrayOfDoubles;
+    //delete[] ArrayOfDoubles;
     cout << endl;
     ActiveString++;
 }
@@ -2056,29 +1855,6 @@ void menu(float ArrayType, const int ArrayColumns, const int ArrayStrings)
         }
         else NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
     }
-}
-
-void FillRand(float Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArraySize; i++)
-    {
-        Array[i] = (float)(rand() % (MaxRand - MinRand) + MinRand) / 10;
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
-}
-
-void FillRand(float**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArrayStrings; i++)
-    {
-        for (int j = 0; j < ArrayColumns; j++)
-        {
-            Array[i][j] = (float)(rand() % (MaxRand - MinRand) + MinRand) / 10;
-        }
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
 }
 
 void Print(float Array[], const int ArraySize, int& ActiveString)
@@ -2746,29 +2522,6 @@ void menu(double ArrayType, const int ArrayColumns, const int ArrayStrings)
         }
         else NavigatingByMenu(MenuList, MenuItems, MenuIndex, key);
     }
-}
-
-void FillRand(double Array[], const int ArraySize, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArraySize; i++)
-    {
-        Array[i] = (double)(rand() % (MaxRand - MinRand) + MinRand) / 10;
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
-}
-
-void FillRand(double**& Array, const int ArrayColumns, const int ArrayStrings, bool& ArrayFilled, int& ActiveString, int MinRand, int MaxRand)
-{
-    for (int i = 0; i < ArrayStrings; i++)
-    {
-        for (int j = 0; j < ArrayColumns; j++)
-        {
-            Array[i][j] = (double)(rand() % (MaxRand - MinRand) + MinRand) / 10;
-        }
-    }
-    ArrayFilled = true;
-    PrintString("Выполнено!", ActiveString);
 }
 
 void Print(double Array[], const int ArraySize, int& ActiveString)
