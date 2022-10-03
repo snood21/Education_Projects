@@ -198,7 +198,7 @@ void menu(T ArrayType, const int ArrayColumns, const int ArrayStrings)
 
     const int MenuItems = 15;
     string MenuList[MenuItems];
-    MenuList[0] = "Заполнить массив случайными ";
+    MenuList[0] = "Заполнить массив случайными числами";
     MenuList[1] = "Вывести массив на экран";
     MenuList[2] = "Вывести массив на экран в обратном порядке";
     MenuList[3] = "Вывести сумму элементов массива";
