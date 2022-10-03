@@ -22,10 +22,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="FillRand.cpp" />
-		<Unit filename="FillRand.h" />
+		<Unit filename="NonTemplatedFunctions.cpp" />
+		<Unit filename="NonTemplatedFunctions.h" />
 		<Unit filename="Service.cpp" />
 		<Unit filename="Service.h" />
+		<Unit filename="TemplatedFunctions.cpp" />
+		<Unit filename="TemplatedFunctions.h" />
 		<Unit filename="WorkingWithMenu.cpp" />
 		<Unit filename="WorkingWithMenu.h" />
 		<Unit filename="constants.h" />

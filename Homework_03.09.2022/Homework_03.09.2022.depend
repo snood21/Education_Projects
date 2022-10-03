@@ -1,0 +1,55 @@
+# depslib dependency file v1.0
+1664705236 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/FillRand.cpp
+	"FillRand.h"
+
+1664705236 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/FillRand.h
+	"stdafx.h"
+	"Service.h"
+
+1664705236 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/stdafx.h
+	<iostream>
+	<string>
+	<iomanip>
+	<termios.h>
+	<unistd.h>
+	<conio.h>
+
+1664705236 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/Service.h
+	"stdafx.h"
+	"constants.h"
+
+1664705236 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/constants.h
+
+1664705236 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/Service.cpp
+	"Service.h"
+
+1664705236 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/WorkingWithMenu.cpp
+	"WorkingWithMenu.h"
+
+1664705236 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/WorkingWithMenu.h
+	"stdafx.h"
+	"constants.h"
+
+1664710534 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/main.cpp
+	"stdafx.h"
+	"constants.h"
+	"Service.h"
+	"WorkingWithMenu.h"
+	"TemplatedFunctions.h"
+	"NonTemplatedFunctions.h"
+
+1664713050 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/TemplatedFunctions.h
+	"stdafx.h"
+	"constants.h"
+	"Service.h"
+	"WorkingWithMenu.h"
+
+1664709709 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/TemplatedFunctions.cpp
+	"TemplatedFunctions.h"
+
+1664709915 source:/media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/NonTemplatedFunctions.cpp
+	"NonTemplatedFunctions.h"
+
+1664709901 /media/snood/DATA1/ШАГ/Функциональное программирование на языке C++/Projects/Homework_03.09.2022/NonTemplatedFunctions.h
+	"TemplatedFunctions.h"
+
